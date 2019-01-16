@@ -1,5 +1,7 @@
 package br.com.magazineluiza.v1.customers.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -16,6 +18,8 @@ import org.springframework.security.web.servletapi.SecurityContextHolderAwareReq
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final AMSAuthenticationTokenFilter authenticationTokenFilter;
+  @Autowired
+  private JwtAuthenticationEntryPoint jwtEntryPoint;
 
   public WebSecurityConfig(
     AMSAuthenticationTokenFilter authenticationTokenFilter) {
@@ -39,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .anyRequest().authenticated();
 
     // If a user try to access a resource without having enough permissions
-    http.exceptionHandling().accessDeniedPage("/auth/signin");
+    http.exceptionHandling().authenticationEntryPoint(jwtEntryPoint);
 
     http.addFilterAfter(authenticationTokenFilter, SecurityContextHolderAwareRequestFilter.class);
 

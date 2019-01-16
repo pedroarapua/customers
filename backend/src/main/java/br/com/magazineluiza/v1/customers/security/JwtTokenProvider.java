@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -50,12 +51,16 @@ public class JwtTokenProvider {
     return builder.compact();
   }
 
-  public String resolveToken(HttpServletRequest req) {
-    String bearerToken = req.getHeader("Authorization");
-    if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-      return bearerToken.substring(7);
-    }
-    return null;
+  public Optional<String> resolveToken(ServletRequest servletRequest) {
+	  Optional<String> token;
+	  HttpServletRequest req = (HttpServletRequest)servletRequest;
+	  String bearerToken = req.getHeader("Authorization");
+	  if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+		  token = Optional.of(bearerToken.substring(7));
+	  } else {
+		  token = Optional.empty();
+	  }
+	  return token;
   }
 
   public boolean validateToken(String token) {
@@ -63,8 +68,9 @@ public class JwtTokenProvider {
       Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
       return true;
     } catch (JwtException | IllegalArgumentException e) {
-      throw new AccessDeniedException("Expired or invalid JWT token");
+      
     }
+    return false;
   }
 
 }

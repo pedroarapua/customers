@@ -23,21 +23,21 @@ public class FilterConfig {
 	
 	private String token = "teste";
 	
-	@Bean
-    public FilterRegistrationBean<RequestResponseLoggingFilter> loggingFilter() {
-        FilterRegistrationBean<RequestResponseLoggingFilter> registrationBean = new FilterRegistrationBean<>();
-        
-        registrationBean.setFilter(
-    		new RequestResponseLoggingFilter()
-        		.setAppName(appName)
-        		.setEnvironment(environment)
-        		.setTeamName(teamName)
-        		.setVersion(version)
-        		.setToken(token));
-        registrationBean.addUrlPatterns("/customers/*");
-
-        return registrationBean;
-
-    }
+//	@Bean
+//    public FilterRegistrationBean<RequestResponseLoggingFilter> loggingFilter() {
+//        FilterRegistrationBean<RequestResponseLoggingFilter> registrationBean = new FilterRegistrationBean<>();
+//        
+//        registrationBean.setFilter(
+//    		new RequestResponseLoggingFilter()
+//        		.setAppName(appName)
+//        		.setEnvironment(environment)
+//        		.setTeamName(teamName)
+//        		.setVersion(version)
+//        		.setToken(token));
+//        registrationBean.addUrlPatterns("/customers/*");
+//
+//        return registrationBean;
+//
+//    }
 
 }
