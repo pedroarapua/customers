@@ -29,5 +29,11 @@ notification:
     enabled: ${NOTIFICATION_SENTRY_ENABLED:false}
     dsn: ${NOTIFICATION_SENTRY_DSN:url}
 
+security:
+  jwt:
+    enabled: ${SECURITY_JWT_ENABLED:false}
+    token:
+      secret-key: ${SECURITY_JWT_TOKEN_SECRETKEY}
+
 build:
   version: ${project.version}
