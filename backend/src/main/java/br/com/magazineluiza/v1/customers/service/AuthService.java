@@ -9,20 +9,11 @@ import br.com.magazineluiza.v1.customers.security.JwtTokenProvider;
 @Service
 public class AuthService {
 
+  @Autowired
+  private JwtTokenProvider jwtTokenProvider;
+
   public SigninEntity signin() {
-	  SigninEntity signin = new SigninEntity(this.createToken()); 
+	  SigninEntity signin = new SigninEntity(jwtTokenProvider.createToken()); 
 	  return signin;
   }
-  
-  public boolean validateToken(String token) {
-    try {
-      Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-      return true;
-    } catch (JwtException | IllegalArgumentException e) {
-      throw new AccessDeniedException("Expired or invalid JWT token");
-    }
-  }
-  
 }
-
-
