@@ -2,7 +2,9 @@ package br.com.magazineluiza.v1.customers.config;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,6 +17,7 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.ResponseMessageBuilder;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -37,6 +40,9 @@ public class DocumentationConfig {
             .paths(PathSelectors.any())
             .build()
             .apiInfo(apiInfo())
+            .securitySchemes(Arrays.asList(apiKey()))
+            .consumes(new HashSet<String>(Arrays.asList("application/json")))
+			.produces(new HashSet<String>(Arrays.asList("application/json")))
             .useDefaultResponseMessages(false)
             .globalResponseMessage(RequestMethod.GET, newArrayList(new ResponseMessageBuilder().code(500)
                 .message("500 message")
@@ -50,5 +56,9 @@ public class DocumentationConfig {
     private ApiInfo apiInfo() {
     	ApiInfo apiInfo = new ApiInfo(applicationName + " API", applicationName + " operation API.", "API", "Terms of service", new Contact("John Doe", "www.example.com", "myeaddress@company.com"), "License of API", "API license URL", Collections.emptyList());
         return apiInfo;
+    }
+    
+    private ApiKey apiKey() {
+    	return new ApiKey("Bearer", "Authorization", "header");
     }
 }

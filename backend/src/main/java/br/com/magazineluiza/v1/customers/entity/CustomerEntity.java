@@ -59,8 +59,6 @@ public class CustomerEntity {
         this.cpf = cpf;
         this.natJur = natJur;
         this.rg = rg;
-        this.branch = branch;
-        this.address = address;
     }
 
     public Long getId() {
