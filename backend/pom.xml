@@ -12,8 +12,10 @@
 		<lombok.version>1.18.4</lombok.version>
 		<surefire.version>2.22.0</surefire.version>
 		<junit.version>4.12</junit.version>
-		<coverage.percentage>0.85</coverage.percentage>
+		<coverage.percentage>0.00</coverage.percentage>
 		<mockito.version>2.21.0</mockito.version>
+		<coveralls.version>4.3.0</coveralls.version>
+		<sonar.version>3.6.0.1398</sonar.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -285,6 +287,27 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${surefire.version}</version>
 			</plugin>
+			
+			<!-- coveralls coverage plugin -->
+			<plugin>
+			    <groupId>org.eluder.coveralls</groupId>
+			    <artifactId>coveralls-maven-plugin</artifactId>
+			    <version>${coveralls.version}</version>
+			    <dependencies>
+			    	<dependency>
+					    <groupId>javax.xml.bind</groupId>
+					    <artifactId>jaxb-api</artifactId>
+					    <version>2.2.3</version>
+					</dependency>
+			    </dependencies>
+			</plugin>
+			
+			<!-- sonar code smell plugin -->
+			<plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonar.version}</version>
+            </plugin>
 		</plugins>
 		
 		<!-- Loading all ${} -->

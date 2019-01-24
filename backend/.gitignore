@@ -36,3 +36,7 @@ hs_err_pid*
 
 application-*.yml
 application-*.properties
+
+# env files
+.env
+.env-*

@@ -31,10 +31,9 @@ public class ResponseHeaderFilter implements Filter {
     public void addHeaderResponse(ServletRequest request, ServletResponse response) {
     	
     	HttpServletResponse httpServletResponse=(HttpServletResponse)response;long startTime = (Long) request.getAttribute("startTime");
-    	BigDecimal httpLatencySeconds = new BigDecimal(((Instant.now().toEpochMilli() - startTime) / 1000.0));
+    	BigDecimal httpLatencySeconds = BigDecimal.valueOf(((Instant.now().toEpochMilli() - startTime) / 1000.0));
     	
     	httpServletResponse.setContentType("application/json");
-    	//httpServletResponse.addHeader("X-Api-Version", version);
     	httpServletResponse.addHeader("X-Response-Time", Double.toString(httpLatencySeconds.doubleValue()));
     }
 }
