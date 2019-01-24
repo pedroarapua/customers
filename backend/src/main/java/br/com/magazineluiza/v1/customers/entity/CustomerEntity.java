@@ -14,9 +14,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
 @Table(schema = "GEMCO", name = "CAD_CLIENTE")
 @JsonPropertyOrder({ "id", "digit", "name", "cpf", "cnpj", "rg", "branch", "address" })
+@Getter @Setter @NoArgsConstructor
 public class CustomerEntity {
 	@Id
     @Column(name = "CODCLI")
@@ -47,30 +52,6 @@ public class CustomerEntity {
     @OneToMany(mappedBy = "customer")
     private List<AddressEntity> address;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getDigit() {
-        return digit;
-    }
-
-    public void setDigit(Integer digit) {
-        this.digit = digit;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @JsonProperty
     public String getCpf() {
         // Condicional pois no gemco a COLUNA chama CGCCPF que armazena CPNJ/CPF
@@ -81,10 +62,6 @@ public class CustomerEntity {
     	
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
     @JsonProperty
     public String getCnpj() {
         // Condicional pois no gemco a COLUNA chama CGCCPF que armazena CPNJ/CPF
@@ -93,34 +70,6 @@ public class CustomerEntity {
         }
         return null;
     	
-    }
-
-    public void setCnpj(String cnpj) {
-    	this.cnpj = cnpj;
-    }
-
-    public String getNatJur() {
-        return natJur;
-    }
-
-    public void setNatJur(String natJur) {
-        this.natJur = natJur;
-    }
-
-    public BranchEntity getBranch() {
-        return branch;
-    }
-
-    public void setBranch(BranchEntity branch) {
-        this.branch = branch;
-    }
-
-    public List<AddressEntity> getAddress() {
-        return address;
-    }
-
-    public void setAddress(List<AddressEntity> address) {
-        this.address = address;
     }
 
     @Override

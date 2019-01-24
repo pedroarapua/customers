@@ -22,7 +22,7 @@ public final class GenericSpecificationsBuilder<T> {
         return with(null, key, operation, value, prefix, suffix);
     }
 
-    public final GenericSpecificationsBuilder<T> with(final String orPredicate, final String key, final String operation, final Object value, final String prefix, final String suffix) {
+    public final GenericSpecificationsBuilder<T> with(final String predicate, final String key, final String operation, final Object value, final String prefix, final String suffix) {
         SearchOperation op = SearchOperation.getSimpleOperation(operation.charAt(0));
         if (op != null) {
             if (op == SearchOperation.EQUALITY) { // the operation may be complex operation
@@ -37,7 +37,8 @@ public final class GenericSpecificationsBuilder<T> {
                     op = SearchOperation.STARTS_WITH;
                 }
             }
-            params.add(new SpecSearchCriteria(orPredicate, key, op, value));
+            boolean orPredicate = predicate != null && predicate.equals(SearchOperation.OR_PREDICATE_FLAG);
+            params.add(new SpecSearchCriteria(key, op, value, orPredicate));
         }
         return this;
     }

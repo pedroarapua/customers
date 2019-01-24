@@ -1,34 +1,22 @@
 package br.com.magazineluiza.v1.customers.entity;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 
-public class AddressEntityPK implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter @Setter @NoArgsConstructor
+public class AddressEntityPK implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
 	@Column(name = "CODEND")
 	private Integer id;
 
 	@Column(name = "CODCLI")
 	private Long customerId;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public Long getCustomerId() {
-		return customerId;
-	}
-
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
-	}
 
 	@Override
 	public int hashCode() {

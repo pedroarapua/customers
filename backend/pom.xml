@@ -9,7 +9,7 @@
 		<zipkin-reporter2.version>2.4.1</zipkin-reporter2.version>
 		<jackson.version>2.9.4</jackson.version>
 		<jacoco.version>0.8.2</jacoco.version>
-		<lombok.version>1.18.0</lombok.version>
+		<lombok.version>1.18.4</lombok.version>
 		<surefire.version>2.22.0</surefire.version>
 		<junit.version>4.12</junit.version>
 		<coverage.percentage>0.85</coverage.percentage>
@@ -125,7 +125,6 @@
 		    <groupId>org.projectlombok</groupId>
 		    <artifactId>lombok</artifactId>
 		    <version>${lombok.version}</version>
-		    <scope>provided</scope>
 		</dependency>
 		
 		<!-- Zipkin trace -->
