@@ -5,19 +5,20 @@ import java.io.Serializable;
 import javax.persistence.Column;
 
 public class AddressEntityPK implements Serializable {
-	private static final long serialVersionUID = -5522403219426806065L;
+	
+	private static final long serialVersionUID = 1L;
 
 	@Column(name = "CODEND")
-	private Long id;
+	private Integer id;
 
 	@Column(name = "CODCLI")
 	private Long customerId;
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

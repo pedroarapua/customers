@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
@@ -27,6 +28,7 @@ import br.com.magazineluiza.v1.customers.util.WebLoggingUtil;
 
 import org.slf4j.Logger;
 
+@Component
 public class RequestResponseLoggingFilter implements Filter {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 	

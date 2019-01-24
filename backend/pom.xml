@@ -5,6 +5,15 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<ch.qos.logback.version>1.2.3</ch.qos.logback.version>
+		<brave.version>4.17.1</brave.version>
+		<zipkin-reporter2.version>2.4.1</zipkin-reporter2.version>
+		<jackson.version>2.9.4</jackson.version>
+		<jacoco.version>0.8.2</jacoco.version>
+		<lombok.version>1.18.0</lombok.version>
+		<surefire.version>2.22.0</surefire.version>
+		<junit.version>4.12</junit.version>
+		<coverage.percentage>0.85</coverage.percentage>
+		<mockito.version>2.21.0</mockito.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -89,17 +98,121 @@
 		
 		<!-- JWT -->
 		<dependency>
-			<!-- Starter for using Spring Security -->
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		<dependency>
 			<!-- JSON Web Token Support -->
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.7.0</version>
 		</dependency>
+		
+		<!-- Spring security -->
+		<dependency>
+			<!-- Starter for using Spring Security -->
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
+		<!-- Lombok automatic get/set -->
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>${lombok.version}</version>
+		    <scope>provided</scope>
+		</dependency>
+		
+		<!-- Zipkin trace -->
+		<dependency>
+			<groupId>io.zipkin.brave</groupId>
+			<artifactId>brave</artifactId>
+			<version>${brave.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.zipkin.reporter2</groupId>
+			<artifactId>zipkin-sender-okhttp3</artifactId>
+			<version>${zipkin-reporter2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.zipkin.brave</groupId>
+			<artifactId>brave-instrumentation-spring-webmvc</artifactId>
+			<version>${brave.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.zipkin.brave</groupId>
+			<artifactId>brave-instrumentation-spring-web</artifactId>
+			<version>${brave.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.zipkin.brave</groupId>
+			<artifactId>brave-context-slf4j</artifactId>
+			<version>${brave.version}</version>
+		</dependency>
+		
+
+        
+        <!-- JSON parse -->
+        <dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		    <version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>${jackson.version}</version>
+		</dependency>
+		
+		<!-- Mock data generator -->
+		<dependency>
+	        <groupId>net.andreinc.mockneat</groupId>
+	        <artifactId>mockneat</artifactId>
+	        <version>0.3.0</version>
+	    </dependency>
+	    
+	    <!-- JUnit -->
+	    <dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-core</artifactId>
+		    <version>${mockito.version}</version>
+		</dependency>
 	</dependencies>
+	
+	<profiles>
+        <profile>
+            <id>development</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <env>development</env>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>production</id>
+            <properties>
+                <env>production</env>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>test</id>
+            <properties>
+                <env>test</env>
+            </properties>
+        </profile>
+
+    </profiles>
 
 	<build>
 		<plugins>
@@ -120,7 +233,60 @@
 			        <useDefaultDelimiters>true</useDefaultDelimiters>
 			    </configuration>
 			</plugin>
+						
+			<!-- jacoco coverage test plugin -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+					    <id>jacoco-check</id>
+					    <goals>
+					        <goal>check</goal>
+					    </goals>
+					    <configuration>
+					        <rules>
+					            <rule>
+					                <element>PACKAGE</element>
+					                <limits>
+					                    <limit>
+					                        <counter>LINE</counter>
+					                        <value>COVEREDRATIO</value>
+					                        <minimum>${coverage.percentage}</minimum>
+					                    </limit>
+					                </limits>
+					            </rule>
+					        </rules>
+					    </configuration>
+					</execution>
+					<!-- attached to Maven test phase -->
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${surefire.version}</version>
+			</plugin>
 		</plugins>
+		
+		<!-- Loading all ${} -->
+<!--         <filters> -->
+<!--             <filter>src/main/resources/application-${env}.yml</filter> -->
+<!--         </filters> -->
 		
 		<resources>
 		    <resource>
@@ -149,6 +315,10 @@
 			<name>Spring Milestones</name>
 			<url>https://repo.spring.io/milestone</url>
 		</repository>
+		<repository>
+	        <id>jcenter</id>
+	        <url>https://jcenter.bintray.com/</url>
+	    </repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>

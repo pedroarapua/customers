@@ -2,6 +2,7 @@ package br.com.magazineluiza.v1.customers.controller;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,7 @@ public class CustomerController {
     	    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
     	    @ApiResponse(code = 404, message = "Customer not found")
     	})
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<List<CustomerEntity>> findAll(
     		@RequestParam(name = "offset", defaultValue = "0") Integer offset,
             @RequestParam(name = "limit", defaultValue = "50") Integer limit,
@@ -38,7 +39,7 @@ public class CustomerController {
             @RequestParam(name = "cnpj", required = false) String cnpj,
             @RequestParam(name = "id", required = false) Long id) throws ResourceNotFoundException {
         
-    	List<CustomerEntity> lstCustomers = this.customerService.filter(id, cpf, cnpj, offset, limit).getContent();
+    	List<CustomerEntity> lstCustomers = this.customerService.filter(id, cpf, cnpj, offset, limit);
     	
     	if(lstCustomers.size() == 0) {
     		throw new ResourceNotFoundException(
@@ -50,7 +51,7 @@ public class CustomerController {
     				);
     	}
     	
-    	return ResponseEntity.ok().body(lstCustomers);
+		return ResponseEntity.status(HttpStatus.OK).body(lstCustomers);
     }
 
     @ApiOperation(value = "Get an customer by Id")
@@ -58,6 +59,6 @@ public class CustomerController {
     public ResponseEntity<CustomerEntity> getById(@PathVariable(name = "id") Long id) throws ResourceNotFoundException {
     	CustomerEntity customer = this.customerService.findById(id)
         		.orElseThrow(() -> new ResourceNotFoundException("Customer not found for this id :: " + id));
-        return ResponseEntity.ok().body(customer);
+        return ResponseEntity.status(HttpStatus.OK).body(customer);
     }
 }

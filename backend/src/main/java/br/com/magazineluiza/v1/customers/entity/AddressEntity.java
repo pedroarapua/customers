@@ -21,7 +21,7 @@ public class AddressEntity {
 	private AddressEntityPK pk;
 
 	@Transient
-	private Long id;
+	private Integer id;
 
 	@JsonIgnore
 	@Column(name = "CODLOGRAD")
@@ -31,7 +31,7 @@ public class AddressEntity {
 	private String street;
 
 	@Column(name = "NUMERO")
-	private Long number;
+	private Integer number;
 
 	@Column(name = "COMPLEMENTO")
 	private String complement;
@@ -58,12 +58,12 @@ public class AddressEntity {
 	}
 
 	@JsonProperty
-	public Long getId() {
-		this.id = this.pk.getId();
-		return id;
+	public Integer getId() {
+		this.id = this.getPk().getId();
+		return this.id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -77,19 +77,18 @@ public class AddressEntity {
 
 	@JsonProperty
 	public String getStreet() {
-		this.street = this.streetType + " " + this.street;
-		return street;
+		return this.getStreetType() + " " + this.street;
 	}
 
 	public void setStreet(String street) {
 		this.street = street;
 	}
 
-	public Long getNumber() {
+	public Integer getNumber() {
 		return number;
 	}
 
-	public void setNumber(Long number) {
+	public void setNumber(Integer number) {
 		this.number = number;
 	}
 
@@ -139,5 +138,13 @@ public class AddressEntity {
 
 	public void setCustomer(CustomerEntity customer) {
 		this.customer = customer;
+	}
+
+	public AddressEntityPK getPk() {
+		return pk;
+	}
+
+	public void setPk(AddressEntityPK pk) {
+		this.pk = pk;
 	}
 }

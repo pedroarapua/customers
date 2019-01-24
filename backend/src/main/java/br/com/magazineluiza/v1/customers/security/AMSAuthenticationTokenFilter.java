@@ -13,8 +13,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,18 +28,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 @Component
+@Order(value = 1)
 public class AMSAuthenticationTokenFilter extends GenericFilterBean {
 	
+	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
 	private final Authentication anonymous = new UsernamePasswordAuthenticationToken("anonims", null, Collections.emptyList()); 
 	
 	@Value("${security.jwt.enabled}")
 	private Boolean jwtEnabaled;
-
-	public AMSAuthenticationTokenFilter(
-		  JwtTokenProvider jwtTokenProvider) {
-		this.jwtTokenProvider = jwtTokenProvider;
-	}
 
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
@@ -47,12 +47,14 @@ public class AMSAuthenticationTokenFilter extends GenericFilterBean {
 			if (token.isPresent() && jwtTokenProvider.validateToken(token.get())) {
 				SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(token, null, Collections.emptyList()));
 			}
+			else {
+				SecurityContextHolder.clearContext();
+			}
 		}
 		else {
 			SecurityContextHolder.getContext().setAuthentication(anonymous);
 		}
 		
-	  
 		filterChain.doFilter(servletRequest, servletResponse);
 	}
 }

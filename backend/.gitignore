@@ -21,6 +21,8 @@ target/
 bin
 **/.tern-project
 
+.factorypath
+
 #IntelliJ files
 *.iml
 *.iws

@@ -1,7 +1,6 @@
 package br.com.magazineluiza.v1.customers.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -17,14 +16,15 @@ import org.springframework.security.web.servletapi.SecurityContextHolderAwareReq
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private final AMSAuthenticationTokenFilter authenticationTokenFilter;
-  @Autowired
-  private JwtAuthenticationEntryPoint jwtEntryPoint;
+	@Autowired
+	private AMSAuthenticationTokenFilter authenticationTokenFilter;
+	@Autowired
+	private JwtAuthenticationEntryPoint jwtEntryPoint;
 
-  public WebSecurityConfig(
-    AMSAuthenticationTokenFilter authenticationTokenFilter) {
-    this.authenticationTokenFilter = authenticationTokenFilter;
-  }
+//	public WebSecurityConfig(
+//		AMSAuthenticationTokenFilter authenticationTokenFilter) {
+//		this.authenticationTokenFilter = authenticationTokenFilter;
+//	}
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -38,7 +38,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // Entry points
     http.authorizeRequests()//
       .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-      .antMatchers("/auth/signin").permitAll()//
       // Disallow everything else..
       .anyRequest().authenticated();
 
@@ -57,12 +56,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   public void configure(WebSecurity web) throws Exception {
     // Allow swagger to be accessed without authentication
-    web.ignoring().antMatchers("/v2/api-docs")//
-      .antMatchers("/swagger-resources/**")//
-      .antMatchers("/swagger-ui.html")//
-      .antMatchers("/swagger.json")//
-      .antMatchers("/configuration/**")//
-      .antMatchers("/webjars/**")//
-      .antMatchers("/public");
+    web.ignoring()
+    	.antMatchers("/auth/signin")
+    	.antMatchers("/v2/api-docs")//
+    	.antMatchers("/swagger-resources/**")//
+    	.antMatchers("/swagger-ui.html")//
+    	.antMatchers("/swagger.json")//
+    	.antMatchers("/configuration/**")//
+    	.antMatchers("/webjars/**")//
+    	.antMatchers("/public");
   }
 }

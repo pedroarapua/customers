@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,36 +12,33 @@ import org.springframework.data.domain.Sort.Direction;
 
 import br.com.magazineluiza.v1.customers.entity.CustomerEntity;
 import br.com.magazineluiza.v1.customers.repository.CustomerRepository;
-
+import br.com.magazineluiza.v1.customers.repository.specification.GenericSpecificationsBuilder;
+import br.com.magazineluiza.v1.customers.util.repository.SearchOperation;
+import br.com.magazineluiza.v1.customers.util.repository.SpecSearchCriteria;
 
 @Service
 public class CustomerService {
     @Autowired
-    CustomerRepository customerRepository;
-
-    public List<CustomerEntity> findAll() {
-        return this.customerRepository.findAll();
-    }
+    CustomerRepository repository;
     
     public Optional<CustomerEntity> findById(Long id) {
-        return this.customerRepository.findById(id);
+        return this.repository.findById(id);
     }
     
-    public Page<CustomerEntity> filter(Long id, String cpf, String cnpj, Integer offset, Integer limit) {
-    	CustomerEntity customerFilter = new CustomerEntity();
+    public List<CustomerEntity> filter(Long id, String cpf, String cnpj, Integer offset, Integer limit) {
+    	GenericSpecificationsBuilder<CustomerEntity> builder = new GenericSpecificationsBuilder<CustomerEntity>();
     	if(cpf != null && !cpf.isEmpty()) {
-    		customerFilter.setCpf(cpf);
+    		builder.with(new SpecSearchCriteria("cpf", SearchOperation.EQUALITY, cpf));
     	}
     	else if(cnpj != null && !cnpj.isEmpty()) {
-    		customerFilter.setCpf(cnpj);
+    		builder.with(new SpecSearchCriteria("cpf", SearchOperation.EQUALITY, cnpj));
     	}
-    	else if(id != null && id > 0) {
-    		customerFilter.setId(id);
+    	else if(id != null) {
+    		builder.with(new SpecSearchCriteria("id", SearchOperation.EQUALITY, id));
     	}
     	
-    	Pageable pageable = new PageRequest(offset, limit, Direction.ASC, "name", "id");
-    	return this.customerRepository.findAll(
-    			Example.of(customerFilter),
-    			pageable);
+    	Pageable pageable = PageRequest.of(offset, limit, Direction.ASC, "name", "id");
+    	Page<CustomerEntity> page = this.repository.findAll(builder.build(), pageable);
+    	return page.getContent();
     }
 }

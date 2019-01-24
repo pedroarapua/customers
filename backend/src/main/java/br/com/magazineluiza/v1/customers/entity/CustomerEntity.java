@@ -23,7 +23,7 @@ public class CustomerEntity {
     private Long id;
 
     @Column(name = "DIGCLI")
-    private Long digit;
+    private Integer digit;
 
     @Column(name = "NOMCLI")
     private String name;
@@ -47,20 +47,6 @@ public class CustomerEntity {
     @OneToMany(mappedBy = "customer")
     private List<AddressEntity> address;
 
-    public CustomerEntity() {
-        super();
-    }
-
-    public CustomerEntity(Long id, Long digit, String name, String cpf, String natJur, String rg) {
-        super();
-        this.id = id;
-        this.digit = digit;
-        this.name = name;
-        this.cpf = cpf;
-        this.natJur = natJur;
-        this.rg = rg;
-    }
-
     public Long getId() {
         return id;
     }
@@ -69,11 +55,11 @@ public class CustomerEntity {
         this.id = id;
     }
 
-    public Long getDigit() {
+    public Integer getDigit() {
         return digit;
     }
 
-    public void setDigit(Long digit) {
+    public void setDigit(Integer digit) {
         this.digit = digit;
     }
 
@@ -88,11 +74,11 @@ public class CustomerEntity {
     @JsonProperty
     public String getCpf() {
         // Condicional pois no gemco a COLUNA chama CGCCPF que armazena CPNJ/CPF
-//        if (!"J".equalsIgnoreCase(this.natJur) && this.cpf != null) {
-//            return CNPJCPFUtils.formatCPF(cpf);
-//        }
-//        return null;
-    	return cpf;
+        if (!"J".equalsIgnoreCase(this.natJur) && this.cpf != null) {
+        	return this.cpf;
+        }
+        return null;
+    	
     }
 
     public void setCpf(String cpf) {
@@ -102,11 +88,11 @@ public class CustomerEntity {
     @JsonProperty
     public String getCnpj() {
         // Condicional pois no gemco a COLUNA chama CGCCPF que armazena CPNJ/CPF
-//        if ("J".equalsIgnoreCase(this.natJur) && this.cpf != null) {
-//            return CNPJCPFUtils.formatCNPJ(this.cpf);
-//        }
-//        return null;
-    	return cpf;
+        if ("J".equalsIgnoreCase(this.natJur) && this.cpf != null) {
+        	return this.cnpj;
+        }
+        return null;
+    	
     }
 
     public void setCnpj(String cnpj) {

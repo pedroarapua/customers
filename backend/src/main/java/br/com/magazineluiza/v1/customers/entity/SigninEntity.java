@@ -4,14 +4,21 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({ "token" })
 public class SigninEntity {
-	
 	private String token;
+	
+	public SigninEntity() {
+		
+	}
 	
 	public SigninEntity(String token) {
 		this.token = token;
 	}
-	
+
 	public String getToken() {
-		return this.token;
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 }
