@@ -1,10 +1,10 @@
 package br.com.magazineluiza.v1.customers.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.eq;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -27,9 +26,6 @@ import org.springframework.data.jpa.domain.Specification;
 import br.com.magazineluiza.v1.customers.builder.CustomerBuilder;
 import br.com.magazineluiza.v1.customers.entity.CustomerEntity;
 import br.com.magazineluiza.v1.customers.repository.CustomerRepository;
-import br.com.magazineluiza.v1.customers.repository.specification.GenericSpecificationsBuilder;
-import br.com.magazineluiza.v1.customers.util.repository.SearchOperation;
-import br.com.magazineluiza.v1.customers.util.repository.SpecSearchCriteria;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CustomerServiceTest {

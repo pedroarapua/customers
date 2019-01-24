@@ -1,10 +1,9 @@
 package br.com.magazineluiza.v1.customers.generator;
 
-import net.andreinc.mockneat.MockNeat;
-import net.andreinc.mockneat.abstraction.MockUnit;
-import net.andreinc.mockneat.unit.types.Ints;
 import br.com.magazineluiza.v1.customers.entity.AddressEntity;
 import br.com.magazineluiza.v1.customers.entity.AddressEntityPK;
+import net.andreinc.mockneat.MockNeat;
+import net.andreinc.mockneat.abstraction.MockUnit;
 
 public class AddressGenerator {
 	private final MockNeat mock = MockNeat.threadLocal();
