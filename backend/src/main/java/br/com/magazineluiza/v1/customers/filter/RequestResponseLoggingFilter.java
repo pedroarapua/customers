@@ -64,8 +64,7 @@ public class RequestResponseLoggingFilter implements Filter {
             try {
 				this.info(requestToCache, responseToCache);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
         } else {
             chain.doFilter(servletRequest, servletResponse);
