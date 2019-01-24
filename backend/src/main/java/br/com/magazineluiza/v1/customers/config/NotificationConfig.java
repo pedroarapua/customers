@@ -1,6 +1,7 @@
 package br.com.magazineluiza.v1.customers.config;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import br.com.magazineluiza.v1.customers.exception.DNSRequiredException;
 import io.sentry.Sentry;
 import io.sentry.SentryClient;
 
@@ -25,9 +27,9 @@ public class NotificationConfig {
 	
 	@Bean
 	@ConditionalOnProperty(name = "notification.sentry.enabled", havingValue = "true")
-	public HandlerExceptionResolver sentryExceptionResolver() throws Exception {
+	public HandlerExceptionResolver sentryExceptionResolver() throws DNSRequiredException, UnknownHostException {
 		if(!dsn.isPresent()) {
-			throw new Exception("DSN is required to enable sentry");
+			throw new DNSRequiredException("DSN is required to enable sentry");
 		}
 		
 		SentryClient client = Sentry.init(dsn.get());

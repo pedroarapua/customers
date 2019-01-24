@@ -29,23 +29,31 @@ public class AddressEntityPK implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		else if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		else if (getClass() != obj.getClass()) {
 			return false;
+		}
+		
 		AddressEntityPK other = (AddressEntityPK) obj;
 		if (customerId == null) {
-			if (other.customerId != null)
+			if (other.customerId != null) {
 				return false;
-		} else if (!customerId.equals(other.customerId))
+			}
+		} else if (!customerId.equals(other.customerId)) {
 			return false;
+		}
 		if (id == null) {
-			if (other.id != null)
+			if (other.id != null) {
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		} else if (!id.equals(other.id)) {
 			return false;
+		}
 		return true;
 	}
 }

@@ -33,7 +33,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     	
     	mapBodyException.put("message", "invalid token");
         mapBodyException.put("details", authException.getMessage());
-        //mapBodyException.put("path", request.getServletPath());
         mapBodyException.put("timestamp", new Date());
 
         responseHeaderFilter.addHeaderResponse(request, response);

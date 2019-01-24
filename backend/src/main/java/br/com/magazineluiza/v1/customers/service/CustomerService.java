@@ -26,11 +26,11 @@ public class CustomerService {
     }
     
     public List<CustomerEntity> filter(Long id, String cpf, String cnpj, Integer offset, Integer limit) {
-    	GenericSpecificationsBuilder<CustomerEntity> builder = new GenericSpecificationsBuilder<CustomerEntity>();
-    	if(cpf != null && !cpf.isEmpty()) {
+    	GenericSpecificationsBuilder<CustomerEntity> builder = new GenericSpecificationsBuilder<>();
+    	if(cpf != null) {
     		builder.with(new SpecSearchCriteria("cpf", SearchOperation.EQUALITY, cpf));
     	}
-    	else if(cnpj != null && !cnpj.isEmpty()) {
+    	else if(cnpj != null) {
     		builder.with(new SpecSearchCriteria("cpf", SearchOperation.EQUALITY, cnpj));
     	}
     	else if(id != null) {

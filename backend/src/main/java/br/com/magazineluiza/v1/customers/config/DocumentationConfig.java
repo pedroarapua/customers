@@ -59,8 +59,7 @@ public class DocumentationConfig {
     }
 
     private ApiInfo apiInfo() {
-    	ApiInfo apiInfo = new ApiInfo(applicationName + " API", applicationName + " operation API.", "API", "Terms of service", new Contact("John Doe", "www.example.com", "myeaddress@company.com"), "License of API", "API license URL", Collections.emptyList());
-        return apiInfo;
+    	return new ApiInfo(applicationName + " API", applicationName + " operation API.", "API", "Terms of service", new Contact("John Doe", "www.example.com", "myeaddress@company.com"), "License of API", "API license URL", Collections.emptyList());
     }
     
     private ApiKey apiKey() {
