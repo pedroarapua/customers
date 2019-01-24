@@ -64,6 +64,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     	.antMatchers("/swagger.json")//
     	.antMatchers("/configuration/**")//
     	.antMatchers("/webjars/**")//
+    	.antMatchers("/actuator/**")//
     	.antMatchers("/public");
   }
 }
