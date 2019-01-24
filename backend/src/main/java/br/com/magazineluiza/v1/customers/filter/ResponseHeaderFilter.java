@@ -30,7 +30,8 @@ public class ResponseHeaderFilter implements Filter {
     
     public void addHeaderResponse(ServletRequest request, ServletResponse response) {
     	
-    	HttpServletResponse httpServletResponse=(HttpServletResponse)response;long startTime = (Long) request.getAttribute("startTime");
+    	HttpServletResponse httpServletResponse=(HttpServletResponse)response;
+    	long startTime = (Long) request.getAttribute("startTime");
     	BigDecimal httpLatencySeconds = BigDecimal.valueOf(((Instant.now().toEpochMilli() - startTime) / 1000.0));
     	
     	httpServletResponse.setContentType("application/json");

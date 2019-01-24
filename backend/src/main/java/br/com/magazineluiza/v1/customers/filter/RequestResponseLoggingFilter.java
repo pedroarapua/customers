@@ -5,6 +5,7 @@ import static net.logstash.logback.argument.StructuredArguments.entries;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -12,13 +13,13 @@ import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -26,14 +27,12 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import br.com.magazineluiza.v1.customers.util.WebLoggingUtil;
 
-import org.slf4j.Logger;
-
 @Component
 public class RequestResponseLoggingFilter implements Filter {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 	
-	private static final String kind = "target";
-	private static final String logType= "json";
+	private static final String KIND = "target";
+	private static final String LOGTYPE= "json";
 	private String environment;
 	private String appName;
 	private String teamName;
@@ -97,7 +96,7 @@ public class RequestResponseLoggingFilter implements Filter {
     	return WebLoggingUtil.readPayloadResponse(response);
     }
     
-    public void info(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void info(HttpServletRequest request, HttpServletResponse response) throws UnknownHostException, IOException {
     	String httpProtocol = request.getScheme();
     	String hostName = request.getServerName();
     	Integer port = request.getServerPort();
@@ -116,11 +115,11 @@ public class RequestResponseLoggingFilter implements Filter {
     		    + httpHost
     		    + httpUri;
     	
-    	Map<String, Object> map = new HashMap<String, Object>();
+    	Map<String, Object> map = new HashMap<>();
     	map.put("name", this.getAppName());
     	map.put("app", this.getAppName());
-    	map.put("type", logType);
-    	map.put("kind", kind);
+    	map.put("type", LOGTYPE);
+    	map.put("kind", KIND);
     	map.put("env", this.getEnvironment());
     	map.put("team", this.getTeamName());
     	map.put("hostname", hostName);

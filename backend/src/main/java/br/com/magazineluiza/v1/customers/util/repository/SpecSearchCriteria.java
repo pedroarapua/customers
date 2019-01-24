@@ -1,14 +1,18 @@
 package br.com.magazineluiza.v1.customers.util.repository;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class SpecSearchCriteria {
+public class SpecSearchCriteria implements Serializable {
 
-    private String key;
+    private static final long serialVersionUID = 1L;
+    
+	private String key;
     private SearchOperation operation;
     private Object value;
     private boolean orPredicate;
