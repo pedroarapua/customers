@@ -8,7 +8,11 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 import org.springframework.web.util.WebUtils;
 
-public class WebLoggingUtil {
+public final class WebLoggingUtil {
+	
+	private WebLoggingUtil() {
+		
+	}
 
     public static String readPayloadRequest(HttpServletRequest request) throws IOException {
     	 String payload = null;

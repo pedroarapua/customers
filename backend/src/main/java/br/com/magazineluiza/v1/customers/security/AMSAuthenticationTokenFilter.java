@@ -1,7 +1,5 @@
 package br.com.magazineluiza.v1.customers.security;
 
-
-//import com.inner.satisfaction.backend.authentication.token.AuthenticationTokenService;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Optional;

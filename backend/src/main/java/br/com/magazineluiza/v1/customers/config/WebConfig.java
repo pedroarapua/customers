@@ -11,8 +11,6 @@ import brave.spring.webmvc.TracingHandlerInterceptor;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-//    @Autowired
-//    HeaderInterceptor headerInterceptor;
     @Autowired(required=false)
     HttpTracing httpTracing;
 

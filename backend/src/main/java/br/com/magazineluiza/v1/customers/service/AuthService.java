@@ -13,7 +13,6 @@ public class AuthService {
   private JwtTokenProvider jwtTokenProvider;
 
   public SigninEntity signin() {
-	  SigninEntity signin = new SigninEntity(jwtTokenProvider.createToken()); 
-	  return signin;
+	  return new SigninEntity(jwtTokenProvider.createToken());
   }
 }

@@ -32,21 +32,13 @@ import org.slf4j.Logger;
 public class RequestResponseLoggingFilter implements Filter {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 	
-	private final String kind = "target";
-	private final String logType= "json";
+	private static final String kind = "target";
+	private static final String logType= "json";
 	private String environment;
 	private String appName;
 	private String teamName;
 	private String version;
 	private String token;
-	
-	@Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-    }
-	
-	@Override
-    public void destroy() {
-    }
 	
 	@Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
@@ -73,11 +65,11 @@ public class RequestResponseLoggingFilter implements Filter {
 
     private Map<String, String> getHeadersInfoRequest(HttpServletRequest request) {
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
 
         Enumeration <String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
-            String key = (String) headerNames.nextElement();
+            String key = headerNames.nextElement();
             String value = request.getHeader(key);
             map.put(key, value);
         }
@@ -86,7 +78,7 @@ public class RequestResponseLoggingFilter implements Filter {
     }
     
     private Map<String, String> getHeadersInfoResponse(HttpServletResponse response) {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
 
         Collection <String> headerNames = response.getHeaderNames();
         for(String header : headerNames) {
@@ -97,14 +89,12 @@ public class RequestResponseLoggingFilter implements Filter {
         return map;
     }
     
-    private String getRequestData(HttpServletRequest request) throws Exception {
-    	String postData = WebLoggingUtil.readPayloadRequest(request);
-    	return postData;
+    private String getRequestData(HttpServletRequest request) throws IOException {
+    	return WebLoggingUtil.readPayloadRequest(request);
     }
     
-    private String getResponseData(HttpServletResponse response) throws Exception {
-    	String postData = WebLoggingUtil.readPayloadResponse(response);
-    	return postData;
+    private String getResponseData(HttpServletResponse response) throws IOException {
+    	return WebLoggingUtil.readPayloadResponse(response);
     }
     
     public void info(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -129,8 +119,8 @@ public class RequestResponseLoggingFilter implements Filter {
     	Map<String, Object> map = new HashMap<String, Object>();
     	map.put("name", this.getAppName());
     	map.put("app", this.getAppName());
-    	map.put("type", this.logType);
-    	map.put("kind", this.kind);
+    	map.put("type", logType);
+    	map.put("kind", kind);
     	map.put("env", this.getEnvironment());
     	map.put("team", this.getTeamName());
     	map.put("hostname", hostName);

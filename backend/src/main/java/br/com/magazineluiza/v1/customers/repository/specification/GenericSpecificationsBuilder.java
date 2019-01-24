@@ -44,15 +44,15 @@ public final class GenericSpecificationsBuilder<T> {
     }
 
     public Specification<T> build() {
-        if (params.size() == 0)
+        if (params.isEmpty())
             return null;
 
         Specification<T> result = new GenericSpecification<T>(params.get(0));
      
         for (int i = 1; i < params.size(); i++) {
             result = params.get(i).isOrPredicate()
-              ? Specification.where(result).or(new GenericSpecification<T>(params.get(i))) 
-              : Specification.where(result).and(new GenericSpecification<T>(params.get(i)));
+              ? Specification.where(result).or(new GenericSpecification<>(params.get(i))) 
+              : Specification.where(result).and(new GenericSpecification<>(params.get(i)));
         }
         
         return result;

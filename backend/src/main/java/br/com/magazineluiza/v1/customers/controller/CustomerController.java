@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,7 +32,7 @@ public class CustomerController {
     	    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
     	    @ApiResponse(code = 404, message = "Customer not found")
     	})
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @GetMapping(value = "")
     public ResponseEntity<List<CustomerEntity>> findAll(
     		@RequestParam(name = "offset", defaultValue = "0") Integer offset,
             @RequestParam(name = "limit", defaultValue = "50") Integer limit,
@@ -41,7 +42,7 @@ public class CustomerController {
         
     	List<CustomerEntity> lstCustomers = this.customerService.filter(id, cpf, cnpj, offset, limit);
     	
-    	if(lstCustomers.size() == 0) {
+    	if(lstCustomers.isEmpty()) {
     		throw new ResourceNotFoundException(
     				"Customers not found for this parameters id:: " + id +
     				" cpf:: " + cpf +
@@ -55,7 +56,7 @@ public class CustomerController {
     }
 
     @ApiOperation(value = "Get an customer by Id")
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/{id}")
     public ResponseEntity<CustomerEntity> getById(@PathVariable(name = "id") Long id) throws ResourceNotFoundException {
     	CustomerEntity customer = this.customerService.findById(id)
         		.orElseThrow(() -> new ResourceNotFoundException("Customer not found for this id :: " + id));
