@@ -15,6 +15,9 @@ import br.com.magazineluiza.v1.customers.exception.DNSRequiredException;
 import io.sentry.Sentry;
 import io.sentry.SentryClient;
 
+import zipkin2.Span;
+import zipkin2.reporter.Reporter;
+
 @Configuration
 @ConditionalOnProperty(name = "notification.enabled", havingValue = "true")
 public class NotificationConfig {
@@ -45,5 +48,4 @@ public class NotificationConfig {
 	public ServletContextInitializer sentryServletContextInitializer() {
 	    return new io.sentry.spring.SentryServletContextInitializer();
 	}
-
 }
