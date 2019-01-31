@@ -16,15 +16,15 @@ import org.springframework.security.web.servletapi.SecurityContextHolderAwareReq
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	private AMSAuthenticationTokenFilter authenticationTokenFilter;
-	@Autowired
-	private JwtAuthenticationEntryPoint jwtEntryPoint;
+	private final AMSAuthenticationTokenFilter authenticationTokenFilter;
+	private final JwtAuthenticationEntryPoint jwtEntryPoint;
 
-//	public WebSecurityConfig(
-//		AMSAuthenticationTokenFilter authenticationTokenFilter) {
-//		this.authenticationTokenFilter = authenticationTokenFilter;
-//	}
+	public WebSecurityConfig(
+		AMSAuthenticationTokenFilter authenticationTokenFilter,
+		JwtAuthenticationEntryPoint jwtEntryPoint) {
+		this.authenticationTokenFilter = authenticationTokenFilter;
+		this.jwtEntryPoint = jwtEntryPoint;
+	}
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {

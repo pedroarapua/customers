@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.magazineluiza.v1.customers.entity.CustomerEntity;
@@ -24,7 +25,7 @@ import io.swagger.annotations.ApiResponses;
 @Api(value="Customer Management System")
 public class CustomerController {
     @Autowired
-    CustomerService customerService;
+    CustomerService service;
     
     @ApiOperation(value = "Filter customer by id or cpf or cnpj", response = List.class)
     @ApiResponses(value = {
@@ -40,7 +41,7 @@ public class CustomerController {
             @RequestParam(name = "cnpj", required = false) String cnpj,
             @RequestParam(name = "id", required = false) Long id) throws ResourceNotFoundException {
         
-    	List<CustomerEntity> lstCustomers = this.customerService.filter(id, cpf, cnpj, offset, limit);
+    	List<CustomerEntity> lstCustomers = this.service.filter(id, cpf, cnpj, offset, limit);
     	
     	if(lstCustomers.isEmpty()) {
     		throw new ResourceNotFoundException(
@@ -58,7 +59,7 @@ public class CustomerController {
     @ApiOperation(value = "Get an customer by Id")
     @GetMapping(value = "/{id}")
     public ResponseEntity<CustomerEntity> getById(@PathVariable(name = "id") Long id) throws ResourceNotFoundException {
-    	CustomerEntity customer = this.customerService.findById(id)
+    	CustomerEntity customer = this.service.findById(id)
         		.orElseThrow(() -> new ResourceNotFoundException("Customer not found for this id :: " + id));
         return ResponseEntity.status(HttpStatus.OK).body(customer);
     }

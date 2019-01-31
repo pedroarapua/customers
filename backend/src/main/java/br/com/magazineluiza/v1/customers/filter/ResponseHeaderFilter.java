@@ -42,11 +42,11 @@ public class ResponseHeaderFilter implements Filter {
     	BigDecimal httpLatencySeconds = BigDecimal.valueOf(((Instant.now().toEpochMilli() - startTime) / 1000.0));
     	
     	httpServletResponse.setContentType("application/json");
-       	httpServletResponse.addHeader("X-Api-Version", version);
-       	final String spanId = this.tracer.currentSpan().context().spanIdString();
+    	final String spanId = this.tracer.currentSpan().context().spanIdString();
     	final String traceId = this.tracer.currentSpan().context().traceIdString();
        	httpServletResponse.addHeader("X-Request-Id", spanId);
        	httpServletResponse.addHeader("X-Trace-Id", traceId);
     	httpServletResponse.addHeader("X-Response-Time", Double.toString(httpLatencySeconds.doubleValue()));
+    	httpServletResponse.addHeader("X-Api-Version", version);
     }
 }

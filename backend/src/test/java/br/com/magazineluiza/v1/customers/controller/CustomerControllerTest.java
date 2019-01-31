@@ -18,39 +18,48 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.internal.verification.VerificationModeFactory;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import br.com.magazineluiza.v1.customers.CustomersControllerConfig;
+import br.com.magazineluiza.v1.customers.builder.AuthSigninBuilder;
 import br.com.magazineluiza.v1.customers.builder.CustomerBuilder;
 import br.com.magazineluiza.v1.customers.entity.AddressEntity;
 import br.com.magazineluiza.v1.customers.entity.CustomerEntity;
 import br.com.magazineluiza.v1.customers.service.CustomerService;
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(CustomerController.class)
-@Import({CustomersControllerConfig.class})
+@RunWith(MockitoJUnitRunner.class)
 @ActiveProfiles("test")
 public class CustomerControllerTest {
 	
-	@MockBean
-	private CustomerService service;
-	@Autowired
 	private MockMvc mockMvc;
-	private final CustomerBuilder customerBuilder;
 	private final String basePath = "/customers";
+	private final static MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json", java.nio.charset.Charset.forName("UTF-8"));
+	@Mock
+	private CustomerService service;
+	@InjectMocks
+	private CustomerController controller;
+	private CustomerBuilder builder;
 	
-	public CustomerControllerTest() {
-		this.customerBuilder = new CustomerBuilder();
-	}
+	@Before
+    public void setUp() {
+		this.builder = new CustomerBuilder();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(this.controller).build();
+    }
 	
 	@Test
 	public void whenfindAllByIdTest() throws Exception {
@@ -61,7 +70,7 @@ public class CustomerControllerTest {
 		Long id = Long.valueOf(1);
 		String url = basePath + "?id=" + id + "&offset=" + offset + "&limit=" + limit;
 		 
-		List<CustomerEntity> lstCustomers = this.customerBuilder.filter(offset, limit, cpf, cnpj, id);
+		List<CustomerEntity> lstCustomers = this.builder.filter(offset, limit, cpf, cnpj, id);
 		given(service.filter(id, cpf, cnpj, offset, limit)).willReturn(lstCustomers);
 		
 		CustomerEntity customer = lstCustomers.get(0);
@@ -70,7 +79,7 @@ public class CustomerControllerTest {
 		this.mockMvc
 		 	.perform(get(url).contentType(APPLICATION_JSON))
 		 		.andExpect(status().isOk())
-		 		.andExpect(content().contentType(APPLICATION_JSON))
+		 		.andExpect(content().contentType(MEDIA_TYPE_JSON_UTF8))
 		 		.andExpect(jsonPath("$", hasSize(1)))
 		 		.andExpect(jsonPath("$[0].id", is(customer.getId().intValue())))
 		 		.andExpect(jsonPath("$[0].cpf", is(customer.getCpf())))
@@ -100,16 +109,16 @@ public class CustomerControllerTest {
 		Long id = null;
 		String url = basePath + "?cpf=" + cpf + "&offset=" + offset + "&limit=" + limit;
 		 
-		List<CustomerEntity> lstCustomers = this.customerBuilder.filter(offset, limit, cpf, cnpj, id);
+		List<CustomerEntity> lstCustomers = this.builder.filter(offset, limit, cpf, cnpj, id);
 		given(service.filter(id, cpf, cnpj, offset, limit)).willReturn(lstCustomers);
 		
 		CustomerEntity customer = lstCustomers.get(0);
 		AddressEntity address = customer.getAddress().get(0);
 		
 		this.mockMvc
-		 	.perform(get(url).with(csrf()).contentType(APPLICATION_JSON))
+		 	.perform(get(url).contentType(APPLICATION_JSON))
 		 		.andExpect(status().isOk())
-		 		.andExpect(content().contentType(APPLICATION_JSON))
+		 		.andExpect(content().contentType(MEDIA_TYPE_JSON_UTF8))
 		 		.andExpect(jsonPath("$", hasSize(1)))
 		 		.andExpect(jsonPath("$[0].id", is(customer.getId())))
 		 		.andExpect(jsonPath("$[0].cpf", is(customer.getCpf())))
@@ -139,7 +148,7 @@ public class CustomerControllerTest {
 		Long id = null;
 		String url = basePath + "?cnpj=" + cnpj + "&offset=" + offset + "&limit=" + limit;
 		 
-		List<CustomerEntity> lstCustomers = this.customerBuilder.filter(offset, limit, cpf, cnpj, id);
+		List<CustomerEntity> lstCustomers = this.builder.filter(offset, limit, cpf, cnpj, id);
 		given(service.filter(id, cpf, cnpj, offset, limit)).willReturn(lstCustomers);
 		
 		CustomerEntity customer = lstCustomers.get(0);
@@ -148,7 +157,7 @@ public class CustomerControllerTest {
 		this.mockMvc
 		 	.perform(get(url).with(csrf()).contentType(APPLICATION_JSON))
 		 		.andExpect(status().isOk())
-		 		.andExpect(content().contentType(APPLICATION_JSON))
+		 		.andExpect(content().contentType(MEDIA_TYPE_JSON_UTF8))
 		 		.andExpect(jsonPath("$", hasSize(1)))
 		 		.andExpect(jsonPath("$[0].cnpj", is(customer.getCnpj())))
  				.andExpect(jsonPath("$[0].digit", is(customer.getDigit())))
@@ -182,12 +191,8 @@ public class CustomerControllerTest {
 		given(service.filter(id, cpf, cnpj, offset, limit)).willReturn(lstCustomers);
 		
 		this.mockMvc
-		 	.perform(get(url).with(csrf()).contentType(APPLICATION_JSON))
-		 		.andExpect(status().isNotFound())
-		 		.andExpect(content().contentType(APPLICATION_JSON))
-		 		.andExpect(jsonPath("$", Matchers.hasKey("timestamp")))
-		 		.andExpect(jsonPath("$", Matchers.hasKey("message")))
-		 		.andExpect(jsonPath("$", Matchers.hasKey("details")));
+		 	.perform(get(url).contentType(APPLICATION_JSON))
+		 		.andExpect(status().isNotFound());
 		
 		verify(service, VerificationModeFactory.times(1)).filter(id, cpf, cnpj, offset, limit);
 		reset(service);
@@ -195,7 +200,7 @@ public class CustomerControllerTest {
 	
 	@Test
     public void whenfindByIdTest() throws Exception {
-		Optional<CustomerEntity> customerOpt = customerBuilder.findById();
+		Optional<CustomerEntity> customerOpt = builder.findById();
 		CustomerEntity customer = customerOpt.get();
 		AddressEntity address = customer.getAddress().get(0);
 		
@@ -205,7 +210,7 @@ public class CustomerControllerTest {
 		this.mockMvc
 	 	.perform(get(url).with(csrf()).contentType(APPLICATION_JSON))
 	 		.andExpect(status().isOk())
-	 		.andExpect(content().contentType(APPLICATION_JSON))
+	 		.andExpect(content().contentType(MEDIA_TYPE_JSON_UTF8))
 	 		.andExpect(jsonPath("$.id", is(customer.getId())))
 	 		.andExpect(jsonPath("$.cpf", is(customer.getCpf())))
 			.andExpect(jsonPath("$.digit", is(customer.getDigit())))
@@ -234,12 +239,8 @@ public class CustomerControllerTest {
 		given(service.findById(id)).willReturn(customer);
 		
 		this.mockMvc
-		 	.perform(get(url).with(csrf()).contentType(APPLICATION_JSON))
-		 		.andExpect(status().isNotFound())
-		 		.andExpect(content().contentType(APPLICATION_JSON))
-		 		.andExpect(jsonPath("$", Matchers.hasKey("timestamp")))
-		 		.andExpect(jsonPath("$", Matchers.hasKey("message")))
-		 		.andExpect(jsonPath("$", Matchers.hasKey("details")));
+		 	.perform(get(url).contentType(APPLICATION_JSON))
+		 		.andExpect(status().isNotFound());
 		
 		verify(service, VerificationModeFactory.times(1)).findById(id);
 		reset(service);
