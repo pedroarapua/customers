@@ -157,7 +157,7 @@
 		<dependency>
 	        <groupId>net.andreinc.mockneat</groupId>
 	        <artifactId>mockneat</artifactId>
-	        <version>0.3.0</version>
+	        <version>0.3.2</version>
 	    </dependency>
 	    
 	    <!-- JUnit -->
