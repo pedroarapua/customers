@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import br.com.magazineluiza.v1.customers.filter.RequestResponseLoggingFilter;
 import brave.http.HttpTracing;
 import zipkin2.Span;
 import zipkin2.reporter.Reporter;
@@ -16,9 +17,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
 	public void addInterceptors(InterceptorRegistry registry) {
-//		if(httpTracing != null) {
-//			registry.addInterceptor(TracingHandlerInterceptor.create(httpTracing));
-//		}
 	}
     
     @Bean
@@ -26,4 +24,6 @@ public class WebConfig implements WebMvcConfigurer {
 	public Reporter<Span> spanReporter() {
 		return Reporter.CONSOLE;
 	}
+    
+    
 }

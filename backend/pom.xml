@@ -4,7 +4,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<java.version>1.8</java.version>
-		<ch.qos.logback.version>1.2.3</ch.qos.logback.version>
 		<jackson.version>2.9.4</jackson.version>
 		<jacoco.version>0.8.2</jacoco.version>
 		<lombok.version>1.18.4</lombok.version>
@@ -15,7 +14,11 @@
 		<coveralls.version>4.3.0</coveralls.version>
 		<sonar.version>3.6.0.1398</sonar.version>
 		<logback.version>1.2.3</logback.version>
+		<logback.contrib.version>0.1.5</logback.contrib.version>
 		<sleuth.version>2.1.1.BUILD-SNAPSHOT</sleuth.version>
+		<springfox.version>2.9.2</springfox.version>
+		<slf4j.version>1.7.25</slf4j.version>
+		<logstash.logback.version>5.3</logstash.logback.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -30,6 +33,10 @@
 	<description>Demo project for Spring Boot</description>
 	
 	<dependencies>
+		<dependency>
+	      	<groupId>org.springframework.boot</groupId>
+	      	<artifactId>spring-boot-starter</artifactId>
+	    </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -68,33 +75,16 @@
         <dependency>
 		    <groupId>io.springfox</groupId>
 		    <artifactId>springfox-swagger2</artifactId>
-		    <version>2.9.2</version>
+		    <version>${springfox.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>io.springfox</groupId>
 		    <artifactId>springfox-swagger-ui</artifactId>
-		    <version>2.9.2</version>
+		    <version>${springfox.version}</version>
 		</dependency>
 		
-		<!--logback logstash -->
-		<dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-access</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-		<dependency>
-		    <groupId>net.logstash.logback</groupId>
-		    <artifactId>logstash-logback-encoder</artifactId>
-		    <version>5.2</version>
-		</dependency>
-		<dependency>
-             <groupId>ch.qos.logback</groupId>
-             <artifactId>logback-classic</artifactId>
-             <version>${logback.version}</version>
-        </dependency>
-         
-         <!--spring http log -->
-         <dependency>
+	 	<!--spring http log -->
+        <dependency>
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-core</artifactId>
 		</dependency>
@@ -167,13 +157,23 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
 		<dependency>
 		    <groupId>org.mockito</groupId>
 		    <artifactId>mockito-core</artifactId>
 		    <version>${mockito.version}</version>
 		</dependency>
 		
+		<!-- Logback -->
+		<dependency>
+		    <groupId>net.logstash.logback</groupId>
+		    <artifactId>logstash-logback-encoder</artifactId>
+		    <version>${logstash.logback.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>ch.qos.logback</groupId>
+		    <artifactId>logback-classic</artifactId>
+		    <version>${logback.version}</version>
+		</dependency>
 	</dependencies>
 	
 	<profiles>
@@ -292,23 +292,6 @@
                 <version>${sonar.version}</version>
             </plugin>
 		</plugins>
-		
-		<!-- Loading all ${} -->
-<!--         <filters> -->
-<!--             <filter>src/main/resources/application-${env}.yml</filter> -->
-<!--         </filters> -->
-		
-		<resources>
-		    <resource>
-		        <directory>${basedir}/src/main/resources</directory>
-		        <filtering>true</filtering>
-		        <includes>
-		            <include>**/application*.yml</include>
-		            <include>**/application*.yaml</include>
-		            <include>**/application*.properties</include>
-		         </includes>
-		    </resource>
-		</resources>
 	</build>
 
 	<repositories>
