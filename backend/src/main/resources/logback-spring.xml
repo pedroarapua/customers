@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<springProperty scope="context" name="logstashHost" source="logging.logstash.host"/>
-	<springProperty scope="context" name="logstashPort" source="logging.logstash.port"/>
-  	<property name="LOG_DIR" value="logs"/>
-  	<property name="PATTERN" value="abc %d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n"/>
+	<property name="LOG_DIR" value="logs"/>
+  	<property name="PATTERN" value="%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg - %mdc%n"/>
 
   	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     	<encoder>
@@ -25,13 +23,17 @@
   	</appender>
   	
   	<springProfile name="!test">
+  		<springProperty scope="context" name="logstashHost" source="logging.logstash.host"/>
+		<springProperty scope="context" name="logstashPort" source="logging.logstash.port"/>
+		<springProperty scope="context" name="fluentdhHost" source="logging.fluentd.host"/>
+		<springProperty scope="context" name="fluentdPort" source="logging.fluentd.port"/>
+	
 	  	<appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
 	      	<destination>${logstashHost}:${logstashPort}</destination>
 	
 	      	<!-- encoder is required -->
 	      	<encoder class="net.logstash.logback.encoder.LogstashEncoder">
 	      		<includeContext>false</includeContext>
-	      		<includeMdc>false</includeMdc>
 	      		<fieldNames>
 		    		<levelValue>[ignore]</levelValue>
 		    		<logger>[ignore]</logger>
@@ -39,6 +41,14 @@
 		  		</fieldNames>
 	      	</encoder>
 	  	</appender>
+	  	
+	  	<appender name="FLUENTD_TEXT" class="ch.qos.logback.more.appenders.DataFluentAppender">
+        	<tag>fluentd</tag>
+        	<label>test</label>
+        	<remoteHost>${fluentdhHost}</remoteHost>
+        	<port>${fluentdPort}</port>
+        	<useEventTime>true</useEventTime>
+    	</appender>
   	</springProfile>
 
   	<springProfile name="development">
@@ -46,6 +56,7 @@
       		<appender-ref ref="STDOUT"/>
       		<appender-ref ref="ROTATION_FILE"/>
       		<appender-ref ref="LOGSTASH"/>
+      		<appender-ref ref="FLUENTD_TEXT"/>
    		</root>
   	</springProfile>
   
@@ -54,6 +65,7 @@
       		<appender-ref ref="STDOUT"/>
       		<appender-ref ref="ROTATION_FILE"/>
       		<appender-ref ref="LOGSTASH"/>
+      		<appender-ref ref="FLUENTD_TEXT"/>
     	</root>
   	</springProfile>
   
@@ -67,6 +79,7 @@
     	<root level="info">
       		<appender-ref ref="ROTATION_FILE"/>
       		<appender-ref ref="LOGSTASH"/>
+      		<appender-ref ref="FLUENTD_TEXT"/>
    		</root>
   	</springProfile>
 </configuration>

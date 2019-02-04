@@ -7,11 +7,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -25,10 +23,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import org.slf4j.MDC;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,14 +41,6 @@ import lombok.experimental.Accessors;
 public class RequestResponseLoggingFilter implements Filter {
 	private static final Logger logger = LoggerFactory.getLogger(RequestResponseLoggingFilter.class);
 	
-	private static final List<String> PATHS = new ArrayList<String>() {
-		private static final long serialVersionUID = 1L;
-		{
-			add("/customers");
-			add("/auth");
-		}
-	};
-    
 	private static final String KIND = "target";
 	private static final String LOGTYPE= "json";
 	private String environment;
@@ -141,42 +132,54 @@ public class RequestResponseLoggingFilter implements Filter {
     		    + httpHost
     		    + httpUri;
     	
-    	Map<String, Object> map = new HashMap<>();
-    	map.put("name", this.appName());
-    	map.put("app", this.appName());
-    	map.put("type", LOGTYPE);
-    	map.put("kind", KIND);
-    	map.put("env", this.environment());
-    	map.put("team", this.teamName());
-    	map.put("hostname", hostName);
-    	map.put("http.host", httpHost);
+    	MDC.remove("logger");
+    	MDC.remove("caller");
+    	
+    	MDC.remove("spanId");
+    	MDC.remove("traceId");
+    	MDC.remove("thread");
+    	MDC.remove("spanExportable");
+    	MDC.remove("X-B3-TraceId");
+    	MDC.remove("X-B3-SpanId");
+    	MDC.remove("X-Span-Export");
+    	
+    	MDC.put("name", this.appName());
+    	MDC.put("app", this.appName());
+    	MDC.put("type", LOGTYPE);
+    	MDC.put("kind", KIND);
+    	MDC.put("env", this.environment());
+    	MDC.put("team", this.teamName());
+    	MDC.put("hostname", hostName);
+    	MDC.put("http.host", httpHost);
     	
     	if(httpLatencySeconds.compareTo(BigDecimal.ZERO) != 0) {
-    		map.put("http.latency_seconds", httpLatencySeconds.doubleValue());
+    		MDC.put("http.latency_seconds", Double.toString(httpLatencySeconds.doubleValue()));
     	}
     	
-    	map.put("http.method", httpMethod);
-    	map.put("http.path", httpPath);
-    	map.put("http.protocol", httpProtocol);
-    	map.put("http.uri", httpUri);
-    	map.put("http.url", httpUrl);
-    	map.put("http.request_header", this.getHeadersInfoRequest(request));
-    	map.put("http.request_body", bodyRequest);
-    	map.put("http.response_header", this.getHeadersInfoResponse(response));
-    	map.put("http.response_body", bodyResponse);
-    	map.put("http.status_code", statusCode);
-    	map.put("peer.hostname", hostName);
-    	map.put("peer.service", this.appName());
-    	map.put("version", this.version());
-    	map.put("bztoken", this.token());
+    	final ObjectMapper mapper = new ObjectMapper();
+    	
+    	MDC.put("http.method", httpMethod);
+    	MDC.put("http.path", httpPath);
+    	MDC.put("http.protocol", httpProtocol);
+    	MDC.put("http.uri", httpUri);
+    	MDC.put("http.url", httpUrl);
+    	MDC.put("http.request_header", mapper.writeValueAsString(this.getHeadersInfoRequest(request)));
+    	MDC.put("http.request_body", bodyRequest);
+    	MDC.put("http.response_header", mapper.writeValueAsString(this.getHeadersInfoResponse(response)));
+    	MDC.put("http.response_body", bodyResponse);
+    	MDC.put("http.status_code", statusCode.toString());
+    	MDC.put("peer.hostname", hostName);
+    	MDC.put("peer.service", this.appName());
+    	MDC.put("version", this.version());
+    	MDC.put("bztoken", this.token());
     	
     	if(statusCode >= 500) {
-    		map.put("message", "request error");
-    		logger.error("{}", entries(map));
+    		MDC.put("message", "request error");
+    		logger.error("request error");
     	}
     	else {
-    		map.put("message", "request completed");
-    		logger.info("{}", entries(map));
+    		MDC.put("message", "request completed");
+    		logger.info("request completed");
     	}
     }
 

@@ -29,6 +29,9 @@ public class FilterConfig {
 	@Value("${logging.logstash.token:@null}")
 	private String token;
 	
+	@Value("${logging.fluentd.enabled:false}")
+	private boolean fluentdEnabled;
+	
 	@Autowired
 	private ResponseHeaderFilter responseHeaderFilter;
 	@Autowired
@@ -80,7 +83,13 @@ public class FilterConfig {
 		final FilterRegistrationBean<RequestResponseLoggingFilter> registrationBean = new FilterRegistrationBean<RequestResponseLoggingFilter>();
 		
 		registrationBean.setFilter(this.requestResponseLoggingFilter);
-		registrationBean.setOrder(2);
+		registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE - 1);
+		registrationBean.addUrlPatterns(
+				"/customers/*",
+				"/auth/*",
+				"/actuator/*"
+				);
+		
 	  	return registrationBean;
 	}
 	
@@ -89,7 +98,7 @@ public class FilterConfig {
 		final FilterRegistrationBean<ResponseHeaderFilter> registrationBean = new FilterRegistrationBean<ResponseHeaderFilter>();
 		
 		registrationBean.setFilter(this.responseHeaderFilter);
-		registrationBean.setOrder(3);
+		registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE);
 	  	return registrationBean;
 	}
 	

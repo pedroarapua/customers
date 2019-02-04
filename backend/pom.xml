@@ -19,6 +19,7 @@
 		<springfox.version>2.9.2</springfox.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<logstash.logback.version>5.3</logstash.logback.version>
+		<fluentd.version>0.3.3</fluentd.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -174,6 +175,19 @@
 		    <artifactId>logback-classic</artifactId>
 		    <version>${logback.version}</version>
 		</dependency>
+		
+		<!-- Logback + Fluentd -->
+		<dependency>
+		    <groupId>com.sndyuk</groupId>
+		    <artifactId>logback-more-appenders</artifactId>
+		    <version>1.5.0</version>
+	  	</dependency>
+		
+		<dependency>
+		    <groupId>org.fluentd</groupId>
+		    <artifactId>fluent-logger</artifactId>
+		    <version>${fluentd.version}</version>
+	  	</dependency>
 	</dependencies>
 	
 	<profiles>
