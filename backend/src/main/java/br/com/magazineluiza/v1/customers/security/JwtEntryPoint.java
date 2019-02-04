@@ -12,18 +12,22 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.magazineluiza.v1.customers.filter.RequestResponseLoggingFilter;
 import br.com.magazineluiza.v1.customers.filter.ResponseHeaderFilter;
 
 @Component
-public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
-	
+public class JwtEntryPoint implements AuthenticationEntryPoint {
 	@Autowired
-	ResponseHeaderFilter responseHeaderFilter;
+	private ResponseHeaderFilter responseHeaderFilter;
+	@Autowired
+	private RequestResponseLoggingFilter requestResponseLoggingFilter;
 	
-    @Override
+	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 			org.springframework.security.core.AuthenticationException authException)
 			throws IOException, ServletException {
@@ -35,11 +39,15 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         mapBodyException.put("details", authException.getMessage());
         mapBodyException.put("timestamp", new Date());
 
-        responseHeaderFilter.addHeaderResponse(request, response);
+    	this.responseHeaderFilter.addHeaderResponse(request, response);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
         final ObjectMapper mapper = new ObjectMapper() ;
+        this.requestResponseLoggingFilter.info(request, response, mapper.writeValueAsString(mapBodyException));
+        
         mapper.writeValue(response.getOutputStream(), mapBodyException);
+        
+        
 	}
 
 }

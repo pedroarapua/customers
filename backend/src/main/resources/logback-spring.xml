@@ -5,53 +5,68 @@
   	<property name="LOG_DIR" value="logs"/>
   	<property name="PATTERN" value="abc %d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n"/>
 
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <pattern>${PATTERN}</pattern>
-    </encoder>
-  </appender>
+  	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    	<encoder>
+      		<pattern>${PATTERN}</pattern>
+    	</encoder>
+  	</appender>
   
-  <appender name="ROTATION_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${LOG_DIR}/customers.log</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <!-- daily rollover -->
-      <fileNamePattern>${LOG_DIR}/customers.%d{yyyy-MM-dd}.log</fileNamePattern>
-      <!-- retain 7 days logs -->
-      <maxHistory>7</maxHistory>
-    </rollingPolicy>
-    <encoder>
-      <pattern>${PATTERN}</pattern>
-    </encoder>
-  </appender>
+  	<appender name="ROTATION_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<file>${LOG_DIR}/customers.log</file>
+   		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+     			<!-- daily rollover -->
+     			<fileNamePattern>${LOG_DIR}/customers.%d{yyyy-MM-dd}.log</fileNamePattern>
+     			<!-- retain 7 days logs -->
+	      	<maxHistory>7</maxHistory>
+	    </rollingPolicy>
+	    <encoder>
+	      	<pattern>${PATTERN}</pattern>
+	    </encoder>
+  	</appender>
+  	
+  	<springProfile name="!test">
+	  	<appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+	      	<destination>${logstashHost}:${logstashPort}</destination>
+	
+	      	<!-- encoder is required -->
+	      	<encoder class="net.logstash.logback.encoder.LogstashEncoder">
+	      		<includeContext>false</includeContext>
+	      		<includeMdc>false</includeMdc>
+	      		<fieldNames>
+		    		<levelValue>[ignore]</levelValue>
+		    		<logger>[ignore]</logger>
+		    		<thread>[ignore]</thread>
+		  		</fieldNames>
+	      	</encoder>
+	  	</appender>
+  	</springProfile>
+
+  	<springProfile name="development">
+    	<root level="info">
+      		<appender-ref ref="STDOUT"/>
+      		<appender-ref ref="ROTATION_FILE"/>
+      		<appender-ref ref="LOGSTASH"/>
+   		</root>
+  	</springProfile>
   
-  <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-      <destination>${logstashHost}:${logstashPort}</destination>
+  	<springProfile name="staging">
+    	<root level="info">
+      		<appender-ref ref="STDOUT"/>
+      		<appender-ref ref="ROTATION_FILE"/>
+      		<appender-ref ref="LOGSTASH"/>
+    	</root>
+  	</springProfile>
+  
+  	<springProfile name="test">
+    	<root level="info">
+      		<appender-ref ref="STDOUT"/>
+   		</root>
+  	</springProfile>
 
-      <!-- encoder is required -->
-      <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-      	<includeContext>false</includeContext>
-      	<includeMdc>false</includeMdc>
-      	<fieldNames>
-	    	<levelValue>[ignore]</levelValue>
-	    	<logger>[ignore]</logger>
-	    	<thread>[ignore]</thread>
-	  	</fieldNames>
-      </encoder>
-  </appender>
-
-  <springProfile name="development">
-    <root level="info">
-      <appender-ref ref="STDOUT"/>
-      <appender-ref ref="ROTATION_FILE"/>
-      <appender-ref ref="LOGSTASH"/>
-    </root>
-  </springProfile>
-
-  <springProfile name="production">
-    <root level="info">
-      <appender-ref ref="ROTATION_FILE"/>
-      <appender-ref ref="LOGSTASH"/>
-    </root>
-  </springProfile>
-
+  	<springProfile name="production">
+    	<root level="info">
+      		<appender-ref ref="ROTATION_FILE"/>
+      		<appender-ref ref="LOGSTASH"/>
+   		</root>
+  	</springProfile>
 </configuration>

@@ -71,7 +71,7 @@ public class CustomerRespositoryTest {
     public void whenFilterNotFoundTest() throws Exception {
     	Pageable pageable = PageRequest.of(offset, limit, Direction.ASC, "name", "id");
 		Page<CustomerEntity> expectedPage = new PageImpl<CustomerEntity>(new ArrayList<CustomerEntity>(), pageable, 0);
-GenericSpecificationsBuilder<CustomerEntity> builder = new GenericSpecificationsBuilder<CustomerEntity>();
+		GenericSpecificationsBuilder<CustomerEntity> builder = new GenericSpecificationsBuilder<CustomerEntity>();
 		
 		builder.with(new SpecSearchCriteria("id", SearchOperation.EQUALITY, -1));
 		

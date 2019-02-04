@@ -7,72 +7,78 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-@Component
+//@Order(value = Ordered.LOWEST_PRECEDENCE)
 @Accessors(fluent = true)
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class RequestResponseLoggingFilter extends OncePerRequestFilter implements Ordered {
+@NoArgsConstructor
+@Getter @Setter
+public class RequestResponseLoggingFilter implements Filter {
 	private static final Logger logger = LoggerFactory.getLogger(RequestResponseLoggingFilter.class);
-	// put filter at the end of all other filters to make sure we are processing after all others
-    private int order = Ordered.LOWEST_PRECEDENCE - 8;
-    
-    @Override
-    public int getOrder() {
-        return order;
-    }
 	
+	private static final List<String> PATHS = new ArrayList<String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			add("/customers");
+			add("/auth");
+		}
+	};
+    
 	private static final String KIND = "target";
 	private static final String LOGTYPE= "json";
 	private String environment;
 	private String appName;
 	private String teamName;
 	private String version;
-	@Value("${logging.logstash.token}")
-	private String token;
+    private String token;
 	
 	@Override
-    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 		
-		ContentCachingRequestWrapper requestToCache = new ContentCachingRequestWrapper(request);
-		ContentCachingResponseWrapper responseToCache = new ContentCachingResponseWrapper(response);
+		HttpServletRequest req = (HttpServletRequest)request;
+		HttpServletResponse res = (HttpServletResponse)response;
+		ContentCachingRequestWrapper requestToCache = new ContentCachingRequestWrapper(req);
+		ContentCachingResponseWrapper responseToCache = new ContentCachingResponseWrapper(res);
 		
         filterChain.doFilter(requestToCache, responseToCache);
         try {
-        	this.info(requestToCache, responseToCache);
+        	String bodyRequest = this.getRequestData(requestToCache);
+        	String bodyResponse = this.getResponseData(responseToCache);
+        	this.info(requestToCache, responseToCache, bodyRequest, bodyResponse);
         	responseToCache.copyBodyToResponse();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
     }
-
-    private Map<String, String> getHeadersInfoRequest(HttpServletRequest request) {
+	
+	private Map<String, String> getHeadersInfoRequest(HttpServletRequest request) {
 
         Map<String, String> map = new HashMap<>();
 
@@ -98,18 +104,25 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter implement
         return map;
     }
     
-    private String getRequestData(ContentCachingRequestWrapper request) throws IOException {
+    public String getRequestData(ContentCachingRequestWrapper request) throws IOException {
     	return IOUtils
     			.toString(request.getInputStream(),UTF_8)
     			.replaceAll("\n", "")
     			.replaceAll("\t", "");
     }
     
-    private String getResponseData(ContentCachingResponseWrapper response) throws IOException {
+    public String getResponseData(ContentCachingResponseWrapper response) throws IOException {
     	return IOUtils.toString(response.getContentInputStream(),UTF_8);
     }
     
-    public void info(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) throws UnknownHostException, IOException {
+    public void info(HttpServletRequest request, HttpServletResponse response, String bodyResponse) throws UnknownHostException, IOException {
+    	ContentCachingRequestWrapper requestToCache = new ContentCachingRequestWrapper(request);
+    	ContentCachingResponseWrapper responseToCache = new ContentCachingResponseWrapper(response);
+        String bodyRequest = this.getRequestData(requestToCache);
+    	this.info(requestToCache, responseToCache,  bodyRequest, bodyResponse);
+    }
+    
+    public void info(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response, String bodyRequest, String bodyResponse) throws UnknownHostException, IOException {
     	String httpProtocol = request.getScheme();
     	String hostName = request.getServerName();
     	Integer port = request.getServerPort();
@@ -148,9 +161,9 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter implement
     	map.put("http.uri", httpUri);
     	map.put("http.url", httpUrl);
     	map.put("http.request_header", this.getHeadersInfoRequest(request));
-    	map.put("http.request_body", this.getRequestData(request));
+    	map.put("http.request_body", bodyRequest);
     	map.put("http.response_header", this.getHeadersInfoResponse(response));
-    	map.put("http.response_body", this.getResponseData(response));
+    	map.put("http.response_body", bodyResponse);
     	map.put("http.status_code", statusCode);
     	map.put("peer.hostname", hostName);
     	map.put("peer.service", this.appName());
