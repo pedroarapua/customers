@@ -32,6 +32,9 @@ public class FilterConfig {
 	@Value("${logging.fluentd.enabled:false}")
 	private boolean fluentdEnabled;
 	
+	@Value("${logging.stackdriver.enabled:false}")
+	private boolean stackDriverEnabled;
+	
 	@Autowired
 	private ResponseHeaderFilter responseHeaderFilter;
 	@Autowired
@@ -52,6 +55,15 @@ public class FilterConfig {
 		
 		registrationBean.setFilter(this.requestHeaderFilter);
 		registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		registrationBean.addUrlPatterns(
+				"/customers",
+				"/customers/*",
+				"/auth",
+				"/auth/*",
+				"/actuator",
+				"/actuator/*"
+				);
+		
 	  	return registrationBean;
 	}
 	
@@ -64,7 +76,10 @@ public class FilterConfig {
 	public FilterRegistrationBean<JwtTokenFilter> jwtFilter(){
 		final FilterRegistrationBean<JwtTokenFilter> registrationBean = new FilterRegistrationBean<JwtTokenFilter>();
 		registrationBean.setFilter(this.jwtTokenFilter);
-		registrationBean.addUrlPatterns("/*");
+		registrationBean.addUrlPatterns(
+				"/customers",
+				"/customers/*"
+				);
 		// set as false to avoid multiple filter calls
 		registrationBean.setEnabled(false);
 		return registrationBean;
@@ -85,8 +100,11 @@ public class FilterConfig {
 		registrationBean.setFilter(this.requestResponseLoggingFilter);
 		registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE - 1);
 		registrationBean.addUrlPatterns(
+				"/customers",
 				"/customers/*",
+				"/auth",
 				"/auth/*",
+				"/actuator",
 				"/actuator/*"
 				);
 		
@@ -99,6 +117,15 @@ public class FilterConfig {
 		
 		registrationBean.setFilter(this.responseHeaderFilter);
 		registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE);
+		registrationBean.addUrlPatterns(
+				"/customers",
+				"/customers/*",
+				"/auth",
+				"/auth/*",
+				"/actuator",
+				"/actuator/*"
+				);
+		
 	  	return registrationBean;
 	}
 	
@@ -111,6 +138,7 @@ public class FilterConfig {
 			.environment(environment)
 			.teamName(teamName)
 			.token(token)
+			.stackDriverEnabled(stackDriverEnabled)
 			.version(version);
 		
 		return filter;

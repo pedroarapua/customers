@@ -56,7 +56,6 @@
 			<artifactId>spring-cloud-sleuth-zipkin</artifactId>
 			<version>${sleuth.version}</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -182,12 +181,21 @@
 		    <artifactId>logback-more-appenders</artifactId>
 		    <version>1.5.0</version>
 	  	</dependency>
-		
 		<dependency>
 		    <groupId>org.fluentd</groupId>
 		    <artifactId>fluent-logger</artifactId>
 		    <version>${fluentd.version}</version>
 	  	</dependency>
+	  	<dependency>
+		  	<groupId>com.google.cloud</groupId>
+		  	<artifactId>google-cloud-logging-logback</artifactId>
+		  	<version>0.79.0-alpha</version>
+		</dependency>
+		<dependency>
+	  		<groupId>com.google.cloud</groupId>
+		  	<artifactId>google-cloud-logging</artifactId>
+		  	<version>1.49.0</version>
+		</dependency>
 	</dependencies>
 	
 	<profiles>

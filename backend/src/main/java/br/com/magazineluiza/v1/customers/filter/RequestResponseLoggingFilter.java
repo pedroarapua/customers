@@ -34,12 +34,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import com.google.cloud.MonitoredResource;
+import com.google.cloud.logging.LogEntry;
+import com.google.cloud.logging.Logging;
+import com.google.cloud.logging.LoggingOptions;
+import com.google.cloud.logging.Payload.JsonPayload;
+import com.google.cloud.logging.Payload.StringPayload;
+import com.google.cloud.logging.Severity;
+
+import java.util.Collections;
+
 //@Order(value = Ordered.LOWEST_PRECEDENCE)
 @Accessors(fluent = true)
 @NoArgsConstructor
 @Getter @Setter
 public class RequestResponseLoggingFilter implements Filter {
 	private static final Logger logger = LoggerFactory.getLogger(RequestResponseLoggingFilter.class);
+    private static final Logging loggerStackDriver = LoggingOptions.getDefaultInstance().getService();
 	
 	private static final String KIND = "target";
 	private static final String LOGTYPE= "json";
@@ -48,6 +59,7 @@ public class RequestResponseLoggingFilter implements Filter {
 	private String teamName;
 	private String version;
     private String token;
+    private boolean stackDriverEnabled;
 	
 	@Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
@@ -173,14 +185,30 @@ public class RequestResponseLoggingFilter implements Filter {
     	MDC.put("version", this.version());
     	MDC.put("bztoken", this.token());
     	
+    	String message = httpMethod + " - " + statusCode + " - " + httpPath + " - " + Double.toString(httpLatencySeconds.doubleValue());
     	if(statusCode >= 500) {
-    		MDC.put("message", "request error");
-    		logger.error("request error");
+    		MDC.put("message", message);
+    		logger.error(message);
+    		if(this.stackDriverEnabled())
+    			this.infoStackDriver(Severity.ERROR);
     	}
     	else {
-    		MDC.put("message", "request completed");
-    		logger.info("request completed");
+    		MDC.put("message", message);
+    		logger.info(message);
+    		if(this.stackDriverEnabled())
+    			this.infoStackDriver(Severity.INFO);
     	}
+    }
+    
+    private void infoStackDriver(Severity level) {
+    	LogEntry entry = LogEntry.newBuilder(JsonPayload.of(MDC.getCopyOfContextMap()))
+            .setSeverity(level)
+            .setLogName(this.appName())
+            .setResource(MonitoredResource.newBuilder("global").build())
+            .build();
+
+        // Writes the log entry asynchronously
+        loggerStackDriver.write(Collections.singleton(entry));
     }
 
 }

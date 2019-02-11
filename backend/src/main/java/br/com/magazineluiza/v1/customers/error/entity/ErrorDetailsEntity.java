@@ -11,6 +11,8 @@ public class ErrorDetailsEntity {
 	
 	private Date timestamp;
 	private String message;
-	private String details;
+	private String path;
+	private String error;
+	private Integer status;
 
 }

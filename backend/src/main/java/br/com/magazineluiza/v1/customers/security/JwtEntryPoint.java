@@ -35,10 +35,13 @@ public class JwtEntryPoint implements AuthenticationEntryPoint {
     	
     	final Map<String, Object> mapBodyException = new HashMap<>() ;
     	
+    	mapBodyException.put("timestamp", "invalid token");
+    	mapBodyException.put("status", 401);
+    	mapBodyException.put("error", "Unauthorized");
     	mapBodyException.put("message", "invalid token");
         mapBodyException.put("details", authException.getMessage());
-        mapBodyException.put("timestamp", new Date());
-
+        mapBodyException.put("path", request.getServletPath());
+       
     	this.responseHeaderFilter.addHeaderResponse(request, response);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 

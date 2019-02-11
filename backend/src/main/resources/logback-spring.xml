@@ -27,6 +27,9 @@
 		<springProperty scope="context" name="logstashPort" source="logging.logstash.port"/>
 		<springProperty scope="context" name="fluentdhHost" source="logging.fluentd.host"/>
 		<springProperty scope="context" name="fluentdPort" source="logging.fluentd.port"/>
+		<springProperty scope="context" name="applicationGroup" source="spring.application.group"/>
+		<springProperty scope="context" name="applicationName" source="spring.application.name"/>
+		<springProperty scope="context" name="stackDriverProjectId" source="logging.stackdriver.project-id"/>
 	
 	  	<appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
 	      	<destination>${logstashHost}:${logstashPort}</destination>
@@ -52,21 +55,20 @@
   	</springProfile>
 
   	<springProfile name="development">
-    	<root level="info">
+    	<logger name="${applicationGroup}.${applicationName}" additivity="false">
       		<appender-ref ref="STDOUT"/>
       		<appender-ref ref="ROTATION_FILE"/>
       		<appender-ref ref="LOGSTASH"/>
       		<appender-ref ref="FLUENTD_TEXT"/>
-   		</root>
+   		</logger>
   	</springProfile>
   
   	<springProfile name="staging">
-    	<root level="info">
-      		<appender-ref ref="STDOUT"/>
+    	<logger name="${applicationGroup}.${applicationName}" additivity="false">
       		<appender-ref ref="ROTATION_FILE"/>
       		<appender-ref ref="LOGSTASH"/>
       		<appender-ref ref="FLUENTD_TEXT"/>
-    	</root>
+   		</logger>
   	</springProfile>
   
   	<springProfile name="test">
@@ -76,10 +78,13 @@
   	</springProfile>
 
   	<springProfile name="production">
-    	<root level="info">
+    	<logger name="${applicationGroup}.${applicationName}" additivity="false">
       		<appender-ref ref="ROTATION_FILE"/>
       		<appender-ref ref="LOGSTASH"/>
       		<appender-ref ref="FLUENTD_TEXT"/>
-   		</root>
+   		</logger>
   	</springProfile>
+  	<root level="info">
+   		<appender-ref ref="STDOUT"/>
+   	</root>
 </configuration>
