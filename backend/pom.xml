@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<java.version>1.8</java.version>
-		<jackson.version>2.9.4</jackson.version>
+		<jackson.version>2.9.10.6</jackson.version>
 		<jacoco.version>0.8.2</jacoco.version>
 		<lombok.version>1.18.4</lombok.version>
 		<surefire.version>2.22.0</surefire.version>
@@ -15,10 +15,10 @@
 		<sonar.version>3.6.0.1398</sonar.version>
 		<logback.version>1.2.3</logback.version>
 		<logback.contrib.version>0.1.5</logback.contrib.version>
-		<sleuth.version>2.1.1.BUILD-SNAPSHOT</sleuth.version>
+		<sleuth.version>2.1.2.RELEASE</sleuth.version>
 		<springfox.version>2.9.2</springfox.version>
 		<slf4j.version>1.7.25</slf4j.version>
-		<logstash.logback.version>5.3</logstash.logback.version>
+		<logstash.logback.version>6.3</logstash.logback.version>
 		<fluentd.version>0.3.3</fluentd.version>
 	</properties>
 	<parent>
