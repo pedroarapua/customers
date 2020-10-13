@@ -8,7 +8,7 @@
 		<jacoco.version>0.8.2</jacoco.version>
 		<lombok.version>1.18.4</lombok.version>
 		<surefire.version>2.22.0</surefire.version>
-		<junit.version>4.12</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<coverage.percentage>0.00</coverage.percentage>
 		<mockito.version>2.21.0</mockito.version>
 		<coveralls.version>4.3.0</coveralls.version>
