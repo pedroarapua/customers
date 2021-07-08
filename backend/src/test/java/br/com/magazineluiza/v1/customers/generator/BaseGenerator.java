@@ -4,8 +4,8 @@ import net.andreinc.mockneat.MockNeat;
 import net.andreinc.mockneat.abstraction.MockUnit;
 
 public class BaseGenerator<T> {
-	protected static final MockNeat mock = MockNeat.threadLocal();
 	private MockUnit<T> mockSchema;
+
 	public BaseGenerator(MockUnit<T> mockSchema) {
 		this.setMockSchema(mockSchema);
 	}

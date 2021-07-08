@@ -3,25 +3,32 @@ package br.com.magazineluiza.v1.customers.generator;
 import br.com.magazineluiza.v1.customers.entity.AddressEntity;
 import br.com.magazineluiza.v1.customers.entity.AddressEntityPK;
 import net.andreinc.mockneat.MockNeat;
+import net.andreinc.mockneat.abstraction.MockConstValue;
 import net.andreinc.mockneat.abstraction.MockUnit;
 
+import static net.andreinc.mockneat.unit.address.Cities.cities;
+import static net.andreinc.mockneat.unit.objects.Filler.filler;
+import static net.andreinc.mockneat.unit.objects.From.from;
+import static net.andreinc.mockneat.unit.text.Strings.strings;
+import static net.andreinc.mockneat.unit.types.Ints.ints;
+
 public class AddressGenerator {
-	private final MockNeat mock = MockNeat.threadLocal();
 	
 	public MockUnit<AddressEntity> schema(Long customerId) {
-		Integer id = this.mock.ints().get();
-		return this.mock.filler(() -> new AddressEntity())
-	    	.setter(AddressEntity::setCity, this.mock.strings())
-	    	.setter(AddressEntity::setPk, this.mock.filler(() -> new AddressEntityPK())
-    			.setter(AddressEntityPK::setId, this.mock.from(new Integer[] { id }))
-    			.setter(AddressEntityPK::setCustomerId, this.mock.from(new Long[] { customerId })))
-	        .setter(AddressEntity::setId, this.mock.from(new Integer[] { id }))
-	        .setter(AddressEntity::setComplement, this.mock.strings())
-	        .setter(AddressEntity::setDistrict, this.mock.strings())
-	        .setter(AddressEntity::setNumber, this.mock.ints())
-	        .setter(AddressEntity::setState, this.mock.from(new String[] { "PR", "SP", "RS" }))
-	        .setter(AddressEntity::setStreetType, this.mock.from(new String[] { "R", "AV" }))
-	        .setter(AddressEntity::setStreet, this.mock.strings())
-	        .setter(AddressEntity::setZipCode, this.mock.strings().size(8));
+		Integer id = ints().get();
+
+		return filler(AddressEntity::new)
+				.setter(AddressEntity::setCity, cities().us())
+				.setter(AddressEntity::setPk, filler(AddressEntityPK::new)
+												.constant(AddressEntityPK::setId, id)
+												.constant(AddressEntityPK::setCustomerId, customerId))
+				.constant(AddressEntity::setId, id)
+				.setter(AddressEntity::setComplement, strings())
+				.setter(AddressEntity::setDistrict, strings())
+				.setter(AddressEntity::setNumber, ints())
+				.setter(AddressEntity::setState, from(new String[] { "PR", "SP", "RS" }))
+				.setter(AddressEntity::setStreetType, from(new String[] { "R", "AV" }))
+				.setter(AddressEntity::setStreet, strings())
+				.setter(AddressEntity::setZipCode, strings().size(8));
 	}
 }

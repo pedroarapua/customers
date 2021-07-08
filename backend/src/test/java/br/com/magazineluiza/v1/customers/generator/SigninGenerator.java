@@ -4,11 +4,13 @@ import net.andreinc.mockneat.MockNeat;
 import net.andreinc.mockneat.abstraction.MockUnit;
 import br.com.magazineluiza.v1.customers.entity.SigninEntity;
 
+import static net.andreinc.mockneat.unit.objects.Filler.filler;
+import static net.andreinc.mockneat.unit.text.Strings.strings;
+
 public class SigninGenerator {
-	private final MockNeat mock = MockNeat.threadLocal();
 	
 	public MockUnit<SigninEntity> schema() {
-		return this.mock.filler(() -> new SigninEntity())
-			.setter(SigninEntity::setToken, this.mock.strings().size(10));
+		return filler(SigninEntity::new)
+				.setter(SigninEntity::setToken, strings().size(10));
 	}
 }

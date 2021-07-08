@@ -5,8 +5,16 @@ import net.andreinc.mockneat.abstraction.MockUnit;
 import net.andreinc.mockneat.types.enums.StringType;
 import br.com.magazineluiza.v1.customers.entity.CustomerEntity;
 
+import static net.andreinc.mockneat.types.enums.StringType.NUMBERS;
+import static net.andreinc.mockneat.unit.objects.Filler.filler;
+import static net.andreinc.mockneat.unit.objects.From.from;
+import static net.andreinc.mockneat.unit.text.Strings.strings;
+import static net.andreinc.mockneat.unit.types.Ints.ints;
+import static net.andreinc.mockneat.unit.types.Longs.longs;
+import static net.andreinc.mockneat.unit.user.Names.names;
+
 public class CustomerGenerator {
-	private final MockNeat mock = MockNeat.threadLocal();
+
 	private final BranchGenerator branchGenerator;
 	private final AddressGenerator addressGenerator;
 	
@@ -16,14 +24,14 @@ public class CustomerGenerator {
 	}
 	
 	public MockUnit<CustomerEntity> schema() {
-		Long id = this.mock.longs().get();
-		return this.mock.filler(() -> new CustomerEntity())
-	    	.setter(CustomerEntity::setName, this.mock.names().first())
-	        .setter(CustomerEntity::setId, this.mock.from(new Long[] { id }))
-	        .setter(CustomerEntity::setNatJur, this.mock.from(new String[]{"F", "J"}))
-	        .setter(CustomerEntity::setDigit, this.mock.from(new Integer[] { 0, 1, 2, 3, 4, 6, 7, 8, 9 }))
-	        .setter(CustomerEntity::setCpf, this.mock.strings().size(11).type(StringType.NUMBERS))
-	        .setter(CustomerEntity::setCnpj, this.mock.strings().size(14).type(StringType.NUMBERS))
+		Long id = longs().get();
+		return filler(CustomerEntity::new)
+	    	.setter(CustomerEntity::setName, names().first())
+	        .constant(CustomerEntity::setId, id)
+	        .setter(CustomerEntity::setNatJur, from(new String[]{"F", "J"}))
+	        .setter(CustomerEntity::setDigit, ints().range(0, 10))
+	        .setter(CustomerEntity::setCpf, strings().size(11).type(NUMBERS))
+	        .setter(CustomerEntity::setCnpj, strings().size(14).type(NUMBERS))
 	        .setter(CustomerEntity::setBranch, this.branchGenerator.schema())
 	        .setter(CustomerEntity::setAddress, this.addressGenerator.schema(id).list(2));
 	}
