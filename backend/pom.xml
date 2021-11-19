@@ -13,7 +13,7 @@
 		<mockito.version>2.21.0</mockito.version>
 		<coveralls.version>4.3.0</coveralls.version>
 		<sonar.version>3.6.0.1398</sonar.version>
-		<logback.version>1.2.3</logback.version>
+		<logback.version>1.2.7</logback.version>
 		<logback.contrib.version>0.1.5</logback.contrib.version>
 		<sleuth.version>2.1.1.BUILD-SNAPSHOT</sleuth.version>
 		<springfox.version>2.9.2</springfox.version>
